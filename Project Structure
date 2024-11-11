@@ -1,0 +1,27 @@
+src/
+│
+├── app/
+│   ├── auth/                     # Auth Module
+│   │   ├── login/                # Login Component
+│   │   │   ├── login.component.ts
+│   │   │   ├── login.component.html
+│   │   │   └── login.component.css
+│   │   ├── register/             # Register Component
+│   │   │   ├── register.component.ts
+│   │   │   ├── register.component.html
+│   │   │   └── register.component.css
+│   │   ├── auth.service.ts       # Auth Service
+│   │   └── auth.module.ts
+│   │
+│   ├── user/                     # User Module
+│   │   ├── profile/              # Profile Component
+│   │   └── cart/                 # Cart Component
+│   │
+│   ├── restaurant/               # Restaurant Module
+│   │   ├── list/                 # Restaurant List Component
+│   │   └── details/              # Restaurant Details Component
+│   │
+│   ├── seller/                   # Seller Module
+│   └── order/                    # Order Module
+│
+└── app.module.ts                 # Main app module
