@@ -1,0 +1,7 @@
+<!-- Displays a summary of the order and a button to confirm -->
+<h2>Order Summary</h2>
+<div *ngFor="let item of orderDetails.items">
+  <p>{{ item.name }} - {{ item.price  }}</p>
+</div>
+<button (click)="placeOrder()">Confirm Order</button>
+
