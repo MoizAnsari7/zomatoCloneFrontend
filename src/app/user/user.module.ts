@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 
 @NgModule({
   declarations: [
-    ProfileComponent,
+    ProfileComponent
     CartComponent,
   ],
   imports: [
