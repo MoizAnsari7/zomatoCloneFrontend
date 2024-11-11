@@ -6,6 +6,8 @@ import { DetailsComponent as RestaurantDetailsComponent } from './restaurant/det
 import { CartComponent } from './order/cart/cart.component';
 import { SummaryComponent } from './order/summary/summary.component';
 import { TrackingComponent } from './order/tracking/tracking.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
 
 
 const routes: Routes = [
@@ -14,6 +16,9 @@ const routes: Routes = [
   { path: 'order/cart', component: CartComponent },
   { path: 'order/summary', component: SummaryComponent },
   { path: 'order/track/:id', component: TrackingComponent }
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({
