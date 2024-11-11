@@ -1,42 +1,47 @@
-// AuthService handles login, registration, and token management
+// AuthService for managing user authentication logic
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:3000/auth'; // Backend URL
-  private currentUserSubject = new BehaviorSubject<any>(null); // To store the current user
-  public currentUser$ = this.currentUserSubject.asObservable(); // Observable for current user
+  private authUrl = 'http://localhost:3000/auth';
+  private currentUserSubject: BehaviorSubject<any>;
+  public currentUser: Observable<any>;
 
-  constructor(private http: HttpClient) {}
-
-  // Login user and save token in local storage
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login`, { email, password }).pipe(
-      tap((response: any) => {
-        localStorage.setItem('token', response.token);
-        this.currentUserSubject.next(response.user);
-      })
-    );
+  constructor(private http: HttpClient, private router: Router) {
+    this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('user')!));
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
   // Register a new user
-  register(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, data);
+  register(user: any) {
+    return this.http.post(`${this.authUrl}/register`, user);
   }
 
-  // Logout user and clear token
+  // Login user and store token
+  login(credentials: any) {
+    return this.http.post(`${this.authUrl}/login`, credentials)
+      .pipe(
+        tap((response: any) => {
+          localStorage.setItem('user', JSON.stringify(response.user));
+          this.currentUserSubject.next(response.user);
+        })
+      );
+  }
+
+  // Logout the user and clear the local storage
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
   }
 
   // Get current logged-in user
-  getCurrentUser() {
+  get currentUserValue() {
     return this.currentUserSubject.value;
   }
 }
