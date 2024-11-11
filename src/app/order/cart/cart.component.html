@@ -1,0 +1,6 @@
+<!-- Displays items in the cart with a button to proceed to order summary -->
+<div *ngFor="let item of cartItems">
+    <p>{{ item.name }} - {{ item.price }}</p>
+  </div>
+  <button routerLink="['/order/summary']">Proceed to Summary</button>
+  
