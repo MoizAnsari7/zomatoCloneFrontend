@@ -22,7 +22,11 @@ export class LoginComponent {
   // Submit login form
   onSubmit() {
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value.email, this.loginForm.value.password)
+      const credentials = [
+        this.loginForm.value.email,
+         this.loginForm.value.password
+      ]
+      this.authService.login(credentials)
         .subscribe({
           next: response => console.log('Login successful', response),
           error: err => console.error('Login failed', err)
