@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthService } from './auth/auth.service';
+import { Role } from './auth/roles.enum';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'zomato-clone-frontend';
+  constructor(private authService: AuthService) {}
+
+  get isAdmin() {
+    return this.authService.currentUserValue?.role === Role.Admin;
+  }
+
+  get isSeller() {
+    return this.authService.currentUserValue?.role === Role.Seller;
+  }
+
+  get isUser() {
+    return this.authService.currentUserValue?.role === Role.User;
+  }
 }
