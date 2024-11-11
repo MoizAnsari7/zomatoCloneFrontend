@@ -9,8 +9,8 @@ import { UserService } from './user.service';
 
 @NgModule({
   declarations: [
-    ProfileComponent
-    CartComponent,
+    ProfileComponent,
+    CartComponent
   ],
   imports: [
     CommonModule,
