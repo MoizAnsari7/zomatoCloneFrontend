@@ -1,47 +1,56 @@
-// AuthService for managing user authentication logic
+// src/app/auth/auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment'; // Define your environment URL here
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private authUrl = 'http://localhost:3000/auth';
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
 
   constructor(private http: HttpClient, private router: Router) {
-    this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('user')!));
+    this.currentUserSubject = new BehaviorSubject<any>(
+      JSON.parse(localStorage.getItem('currentUser') || '{}')
+    );
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  // Register a new user
-  register(user: any) {
-    return this.http.post(`${this.authUrl}/register`, user);
+  // Login method to authenticate user and store JWT token
+  login(email: string, password: string) {
+    return this.http
+      .post<any>(`${environment.apiUrl}/auth/login`, { email, password })
+      .pipe((user) => {
+        // Store JWT token in localStorage
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        return user;
+      });
   }
 
-  // Login user and store token
-  login(credentials: any) {
-    return this.http.post(`${this.authUrl}/login`, credentials)
-      .pipe(
-        tap((response: any) => {
-          localStorage.setItem('user', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        })
-      );
+  // Get the current user from localStorage
+  get currentUserValue() {
+    return this.currentUserSubject.value;
   }
 
-  // Logout the user and clear the local storage
+  // Logout method to remove the JWT token
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
-  // Get current logged-in user
-  get currentUserValue() {
-    return this.currentUserSubject.value;
+  // Method to add JWT token to headers
+  getAuthHeaders() {
+    const currentUser = this.currentUserValue;
+    if (currentUser && currentUser.access_token) {
+      return new HttpHeaders({
+        Authorization: `Bearer ${currentUser.access_token}`,
+      });
+    }
+    return new HttpHeaders();
   }
 }
