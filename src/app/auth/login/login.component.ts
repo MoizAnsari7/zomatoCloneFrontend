@@ -1,7 +1,8 @@
-// LoginComponent for user login
+// LoginComponent for displaying and handling user login
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,28 +10,28 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loginForm: FormGroup;
+  loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
+  });
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
-    // Define form with email and password fields
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
-  }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  // Submit login form
-  onSubmit() {
+  // Submit the login form
+  onLogin() {
     if (this.loginForm.valid) {
-      const credentials = [
-        this.loginForm.value.email,
-         this.loginForm.value.password
-      ]
-      this.authService.login(credentials)
-        .subscribe({
-          next: response => console.log('Login successful', response),
-          error: err => console.error('Login failed', err)
-        });
+      this.authService.login(this.loginForm.value).subscribe({
+        next: () => {
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          console.error('Login failed', err);
+        }
+      });
     }
   }
 }
