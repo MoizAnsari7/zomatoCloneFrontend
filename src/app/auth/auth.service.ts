@@ -19,6 +19,12 @@ export class AuthService {
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
+
+  // Register user method
+  register(userData:any) {
+    return this.http.post<any>(`${environment.apiUrl}/register`, userData); // Make sure the endpoint exists in backend
+  }
+
   // Login method to authenticate user and store JWT token
   login(email: string, password: string) {
     return this.http
