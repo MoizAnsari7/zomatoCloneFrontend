@@ -1,7 +1,8 @@
-// RegisterComponent for new user registration
+// RegisterComponent for displaying and handling user registration
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,23 +10,28 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-  registerForm: FormGroup;
+  registerForm = this.fb.group({
+    name: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
-    // Define form with fields for registration
-    this.registerForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
-  }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  // Submit registration form
-  onSubmit() {
+  // Submit the registration form
+  onRegister() {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
-        next: response => console.log('Registration successful', response),
-        error: err => console.error('Registration failed', err)
+        next: () => {
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Registration failed', err);
+        }
       });
     }
   }
